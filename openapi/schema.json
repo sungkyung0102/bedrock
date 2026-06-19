@@ -1,0 +1,149 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CodeBuddy Tools API",
+    "version": "1.0.0",
+    "description": "Tools for GitHub PR review, complexity analysis, PR comments, and Slack notifications"
+  },
+  "paths": {
+    "/pr": {
+      "get": {
+        "operationId": "get_github_pr",
+        "summary": "Get GitHub Pull Request details",
+        "description": "GitHub Pull Request의 제목, 본문, 변경 파일, diff를 조회합니다. 사용자가 PR 리뷰를 요청하면 이 도구를 사용합니다.",
+        "parameters": [
+          {
+            "name": "owner",
+            "in": "query",
+            "required": true,
+            "schema": {"type": "string"},
+            "description": "GitHub repository owner"
+          },
+          {
+            "name": "repo",
+            "in": "query",
+            "required": true,
+            "schema": {"type": "string"},
+            "description": "GitHub repository name"
+          },
+          {
+            "name": "pr_number",
+            "in": "query",
+            "required": true,
+            "schema": {"type": "integer"},
+            "description": "Pull Request number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "PR details retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {"type": "object"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/complexity": {
+      "post": {
+        "operationId": "analyze_complexity",
+        "summary": "Analyze code complexity",
+        "description": "Python 코드 문자열을 받아 조건문과 반복문 기준으로 복잡도를 분석합니다.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "description": "Python code to analyze"
+                  }
+                },
+                "required": ["code"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Complexity analysis completed",
+            "content": {
+              "application/json": {
+                "schema": {"type": "object"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comment": {
+      "post": {
+        "operationId": "post_pr_comment",
+        "summary": "Post comment to GitHub PR",
+        "description": "GitHub Pull Request에 코드 리뷰 결과 댓글을 등록합니다.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "owner": {"type": "string"},
+                  "repo": {"type": "string"},
+                  "pr_number": {"type": "integer"},
+                  "comment": {"type": "string"}
+                },
+                "required": ["owner", "repo", "pr_number", "comment"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comment posted successfully",
+            "content": {
+              "application/json": {
+                "schema": {"type": "object"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/slack": {
+      "post": {
+        "operationId": "send_slack",
+        "summary": "Send Slack notification",
+        "description": "코드 리뷰 결과를 Slack Webhook으로 전송합니다.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {"type": "string"}
+                },
+                "required": ["message"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Slack notification sent",
+            "content": {
+              "application/json": {
+                "schema": {"type": "object"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
